@@ -1,8 +1,11 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
+\usepackage{float}
 
 \title{Nuclear Power Plant WAN Design}
-\date{November 2019}
+\author{Tarun Mohandas  2018201008 \\* \\* K.A.Meghashree  2018201055 \\* \\* Dhar Padma Patanjali  2018201011}
+
+\date{}
 
 \usepackage{natbib}
 \usepackage{graphicx}
@@ -12,15 +15,80 @@
 \maketitle
 
 \section{Introduction}
-There is a theory which states that if ever anyone discovers exactly what the Universe is for and why it is here, it will instantly disappear and be replaced by something even more bizarre and inexplicable.
-There is another theory which states that this has already happened.
-\section{Networking at a high level}
 \begin{figure}[htb]
 	\centering
 	\includegraphics[width=12cm,height=6cm]{ass1.png}
+	\caption{High level design}
 \end{figure}
-In India, we have 7 Nuclear power plants. we shall have interconnectivity between each of the power plants, and interconnectivity between CISF, PMO and each of the power plant.
-
+In India, we have 7 Nuclear power plants.The Department of Atomic Energy (DAE) manages all the works of all the
+nuclear power plants across the country, which are part of the Nuclear Power Corporation of India Ltd. (NPCIL). We shall be designing the WAN for handling communication between the power plants, other bodies as well as within the power plant. We shall have inter connectivity between each of the power plants and each power plant is also connected to CISF \& PMO.
+\section{LAN Design Within A Nuclear Power Plant}
+\subsection{Architecture}
+In Figure 2, communication medium used is fibre optic and not Copper wires because
+\begin{itemize}
+    \item susceptibility of Copper to electromagnetic interference (EMI) due to the coupling of transient
+emissions from close proximity electrical devices, such as power supplies, motors, or
+electric power conduits
+\item the ability to tap and couple these signals into monitoring devices that can monitor or
+replicate the data stream being propagated within the copper cabling.
+\item Because fiber
+optics uses a light wave to encode and propagate data, it does not emit electrical signals that can
+be coupled into a monitoring device by an adversary.
+\end{itemize}
+A proper VLAN design can provide data flow enforcement allowing only devices that have been
+assigned to a specific VLAN the ability to receive and forward packets associated with the
+source and destination of the network flow. All ports which are members of a VLAN can
+communicate directly with each other just as they would be able to had they been a member of a
+standard network segment. This allows the network administrator to establish data flow criteria
+between communicating end nodes within a safety system network.
+\\*
+\\*
+Sensors are used to prevent and detect intrusions and cyber attacks:
+\\*
+Sensor 1 is placed at the perimeter of the external public facing network and
+the internal plant. This sensor is located outside of the boundary firewall but inside the edge
+router. This allows the sensor to monitor attacks that originate from outside of the protected
+network zones prior to being filtered by external boundary Firewall B. \\* Sensor 2 is in a position to
+monitor traffic to and from the shared information server of Firewall A. This allows the sensor to
+determine if Firewall A is affording the necessary protection for the shared information server. It
+can monitor data flows to determine authorized access as well as attacks or connections that may
+originate from within from a compromised asset. \\* Sensors 3 and 4 are interior zone
+sensors monitoring the traffic. This can help determine if
+proper policy has been applied to the firewall to prevent external connections from being made
+to the safety network located in Safety block or to monitor attacks against the business network in
+Business processing block. \\* Sensors 5 and 6 illustrate the way IDS sensors can be used to monitor the flow of traffic
+between different internal groups on the network. Sensor 5 is protecting the engineering
+processing network, while Sensor 6 is monitoring the process control network.
+\begin{figure}[!ht]
+	\centering
+	\includegraphics[width=12cm,height=10cm]{lan.jpg}
+	\caption{LAN Design}
+\end{figure}
+\subsection{Access Control}
+\begin{itemize}
+    \item {Local Access Control}
+    \\* Local access can be referred to as “on-premises access” or access that originates within an
+identified internal network boundary. Biometric system can be used at different points in the power plant especially where crtitical operations are performed.VLANs created
+between ports on an Ethernet network device would also be considered a means of providing
+network access control and would need to be documented and validated.
+    \item{Remote Access Control}
+    \\* Remote access can be referred to as a connection to any network element associated with the
+power plant that originates outside of its external cyber-defined boundary.One of the available means of protecting internal networks from external access
+involves boundary filter devices, such as an edge router or a firewall. A properly configured
+firewall should have the ability to filter data flows that originate from a point outside of its
+external perimeter, as well as points that originate within its internal domain. The filtering can be
+based on multiple criteria, including IP address, transport layer ID (Transmission Control
+Protocol (TCP) or User Datagram Protocol (UDP)), connection ports, connection initiation, and
+applications.
+\end{itemize}
+\subsection{VPN}
+Remote access can also include the use of VPN appliances that can provide data integrity and
+confidentiality. For proper network access interrogation, the termination point for a VPN flow
+should be at the edge or egress of the protected network. The reason for this termination point is
+to allow the data flow to be decrypted and analyzed by additional security devices, such as a
+firewall or IDS. This will ensure the VPN is connecting to the proper end point devices within
+the protected network and is implementing the proper application. Each authorized VPN should
+be documented in the network security policy.
 \section{Networking between DAE and other Nuclear Power Plants}
 \subsection{Requirement}
 The nuclear power plants across India and Department of Atomic Energy offices should be able to get access to specific sections of the power plant and data communication should happen in reliable and secure manner.
@@ -37,6 +105,7 @@ All controllers and fibre optic switches are connected using fibre optic cables.
 \begin{figure}[htb]
 	\centering
 	\includegraphics[width=12cm,height=6cm]{sdwan.png}
+	\caption{SD-WAN Architecture}
 \end{figure}
 All the above shown switches are programmable switches connected to some SD controller. The SD controller is where rules are configured and the switches do the forwarding. There is no requirement for another firewall in the network gateway as the SD WAN devices itself can be configured in such a manner that it does everything a firewall does. There is a separate firewall installed for live data as the number of rules will be very large and might overload the common controller. All rules related to live data filtering to send to DAE office can happen in this firewall.
 
@@ -47,13 +116,14 @@ It is important to get live updates from inside the nuclear reactor for safety a
 \begin{figure}[htb]
 	\centering
 	\includegraphics[width=12cm,height=3cm]{wpan_design.png}
+	\caption{6LoWPAN for live data}
 \end{figure}
 \subsection{Protocol and Device Specifications}
 For the Wireless personal area networks we propose \textbf{6LoWPAN} technology. 6LoWPAN stands for IPv6 over Low Powered Wireless Personal Area Networks. 6LoWPAN is a networking technology or adaptation layer that allows IPv6 packets to be carried efficiently within small link layer frames, such as those defined by IEEE 802.15.4. 6LoWPAN is an open standard defined in RFC 6282 by the Internet Engineering Task Force (IETF), the standards body that defines many of the open standards used on the Internet such as UDP, TCP and HTTP to name a few. A powerful feature of 6LoWPAN is that while originally conceived to support IEEE 802.15.4 low-power wireless networks in the 2.4-GHz band, it is now being adapted and used over a variety of other networking media. \textbf{Texas Instruments} make 6LoWPAN temperature sensors, pressure sensors and movement sensors. Its \textbf{CC2538 Powerful Wireless Microcontroller} or \textbf{TIDA-01547} 6LoWPAN controller can be used for data collection and forwarding to specific systems.
 
 \section{Networking between Power Plants and other Organisations}
 
-\subsection{Connectivity between power plant and PMO.(Protocol-TCP)}
+\subsection{Connectivity between power plant and PMO(Protocol-TCP)}
 The PMO office shall be connected to the power plant in SD WAN configuration. The PMO office can query the server in power plant and can get information from them. However, restriction in access will be provided. Security is the most important parameter when it comes to transfer of information. Thus, IPSec used with ESP.
 
 
@@ -69,10 +139,13 @@ The CISF and PMO can communicate via TCP protocol and MPLS for a more secure and
 
 \begin{figure}[htb]
 	\centering
-	\includegraphics[width=12cm,height=6cm]{ass.png}
+	\includegraphics[width=12cm,height=5cm]{ass.png}
+	\caption{Connectivity between pwer plant, PMO and CISF}
 \end{figure}
 The figure above represents the various interconnectivity of data flow and storage in our system. Data flows from our sensor and is stored in the database as well as is is sent to the controller.
 Electricity is supplied to the power grid and the power grid server gives feed back with TCP Protocol and IPSec about how much electricity input it can handle. It can even send warning messages if there may be too much power input. Next we have an interconnectivity between the PMO Office, the CISF and the nuclear power plant. 
+\section{Communication With Nuclear Fuel Source}
+ India currently imports Uranium from Russia, Kazakhstan and Canada. Thus, India is accountable to the UN about the fuel usage statistics. Furthermore, information has to provided to the source country about their export is being used. Thus, a service provider like Verizon is used.
 \section{Data Storage and Security of the data}
 \paragraph{}
 Data from the sensors, inputs from the controllers, power grid and logs of packets, details of information shared, power outputs will be amongst the  data that will be stored in a database. 
@@ -112,8 +185,10 @@ There is a need for Prime Minister of India (through the Nuclear Power Plant) to
 
 
 \section{Conclusion}
-``I always thought something was fundamentally wrong with the universe'' \citep{adams1995hitchhiker}
-
+The above WAN design for the Nuclear power plant is secure, reliable with high availability and can relay emergencies as soon as possible.
 \bibliographystyle{plain}
 \bibliography{references}
+\begin{thebibliography}{bib}
+    \bibitem{1} BARC Highlights\\ \url{http://www.barc.gov.in/publications/eb/golden/electronics/electronics.pdf}
+\end{thebibliography}
 \end{document}
